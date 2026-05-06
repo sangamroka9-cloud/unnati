@@ -1,194 +1,150 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Stop Unnati From Exploding</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-  }
+body {
+  margin:0;
+  font-family: Arial;
+  overflow:hidden;
+  background: linear-gradient(to bottom, #ffd6e7, #ffb3c6);
+  transition:0.4s;
+}
 
-  body {
-    margin: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to bottom, #ffd6e7, #ffb3c6);
-    transition: background 0.3s;
-  }
+#title {
+  position:absolute;
+  top:10px;
+  width:100%;
+  text-align:center;
+  font-size:26px;
+  font-weight:bold;
+  color:#b3003c;
+}
 
-  #game {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-  }
+#game {
+  width:100vw;
+  height:100vh;
+  position:relative;
+}
 
-  #title {
-    position: absolute;
-    top: 15px;
-    width: 100%;
-    text-align: center;
-    font-size: 32px;
-    font-weight: bold;
-    color: #b3003c;
-    z-index: 10;
-  }
+/* STICK FIGURE */
+#girl {
+  position:absolute;
+  left:50%;
+  top:45%;
+  transform:translate(-50%,-50%);
+}
 
-  #timer {
-    position: absolute;
-    top: 70px;
-    right: 20px;
-    background: white;
-    padding: 10px 15px;
-    border-radius: 12px;
-    font-weight: bold;
-    border: 3px solid #ff4d88;
-    z-index: 10;
-  }
+.head {
+  width:60px;height:60px;border:4px solid black;border-radius:50%;margin:auto;
+}
+.body {
+  width:4px;height:90px;background:black;margin:auto;
+}
+.arms {
+  width:80px;height:4px;background:black;margin:-55px auto 0;
+}
+.legs {
+  width:80px;height:4px;background:black;margin:45px auto 0;
+}
 
-  #angerBox {
-    position: absolute;
-    top: 70px;
-    left: 20px;
-    width: 260px;
-    background: white;
-    border-radius: 15px;
-    border: 3px solid #ff4d88;
-    padding: 15px;
-    z-index: 10;
-  }
+#emotion {
+  text-align:center;
+  font-weight:bold;
+  margin-top:10px;
+}
 
-  #angerText {
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #b3003c;
-  }
+/* SHAKE */
+.shake {
+  animation: shake 0.2s infinite;
+}
+@keyframes shake {
+  0% { transform:translate(-50%,-50%) translateX(-4px); }
+  50% { transform:translate(-50%,-50%) translateX(4px); }
+  100% { transform:translate(-50%,-50%) translateX(-4px); }
+}
 
-  #angerBarContainer {
-    width: 100%;
-    height: 28px;
-    background: #eee;
-    border-radius: 20px;
-    overflow: hidden;
-    border: 2px solid #b3003c;
-  }
+/* ANGER BAR */
+#angerBox {
+  position:absolute;
+  top:70px;
+  left:20px;
+  width:240px;
+  background:white;
+  border-radius:12px;
+  border:3px solid #ff4d88;
+  padding:10px;
+}
 
-  #angerBar {
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(to right, orange, red);
-    transition: width 0.2s;
-  }
+#bar {
+  width:0%;
+  height:20px;
+  background:red;
+  border-radius:10px;
+  transition:0.2s;
+}
 
-  #girl {
-    position: absolute;
-    left: 50%;
-    top: 45%;
-    transform: translate(-50%, -50%);
-    font-size: 140px;
-    transition: transform 0.1s;
-  }
+/* SPEECH */
+#speech {
+  position:absolute;
+  top:18%;
+  left:50%;
+  transform:translateX(-50%);
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  border:3px solid black;
+  font-weight:bold;
+  display:none;
+  text-align:center;
+}
 
-  #emotion {
-    position: absolute;
-    left: 50%;
-    top: 62%;
-    transform: translateX(-50%);
-    font-size: 28px;
-    font-weight: bold;
-    color: #990000;
-  }
+/* BUTTONS */
+#controls {
+  position:absolute;
+  bottom:20px;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+}
 
-  #buttons {
-    position: absolute;
-    bottom: 30px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 15px;
-    padding: 20px;
-  }
+button {
+  padding:10px 14px;
+  border-radius:10px;
+  border:2px solid #ff4d88;
+  background:white;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-  button {
-    padding: 14px 20px;
-    font-size: 18px;
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    background: white;
-    border: 3px solid #ff4d88;
-    font-weight: bold;
-    transition: 0.2s;
-  }
+/* OVERLAY */
+#overlay {
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  color:white;
+  z-index:100;
+  text-align:center;
+}
 
-  button:hover {
-    transform: scale(1.08);
-    background: #ffe6ef;
-  }
-
-  #eventPopup {
-    position: absolute;
-    top: 160px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: white;
-    border: 4px solid red;
-    border-radius: 20px;
-    padding: 20px;
-    width: 340px;
-    display: none;
-    z-index: 50;
-    text-align: center;
-  }
-
-  #eventText {
-    font-size: 22px;
-    margin-bottom: 20px;
-    color: #990000;
-    font-weight: bold;
-  }
-
-  .responseBtn {
-    margin: 8px;
-    padding: 10px 14px;
-    font-size: 16px;
-  }
-
-  #gameOverScreen {
-    position: absolute;
-    inset: 0;
-    background: rgba(0,0,0,0.8);
-    color: white;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    z-index: 100;
-    text-align: center;
-  }
-
-  #gameOverScreen h1 {
-    font-size: 60px;
-    margin-bottom: 10px;
-  }
-
-  #gameOverScreen p {
-    font-size: 24px;
-    margin-bottom: 20px;
-  }
-
-  .shake {
-    animation: shake 0.2s infinite;
-  }
-
-  @keyframes shake {
-    0% { transform: translate(-50%, -50%) translateX(-4px); }
-    50% { transform: translate(-50%, -50%) translateX(4px); }
-    100% { transform: translate(-50%, -50%) translateX(-4px); }
-  }
+/* EXPLOSION */
+#boom {
+  position:absolute;
+  inset:0;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  font-size:90px;
+}
 </style>
 </head>
 
@@ -196,209 +152,133 @@
 
 <div id="game">
 
-  <div id="title">💥 Stop Unnati From Exploding 💥</div>
+<div id="title">💥 Stop Unnati From Exploding 💥</div>
 
-  <div id="angerBox">
-    <div id="angerText">ANGER LEVEL 😡</div>
+<div id="overlay">
+  <h1>Game Starting</h1>
+  <p>Calm her before she reaches 100%</p>
+  <button onclick="startGame()">Start</button>
+</div>
 
-    <div id="angerBarContainer">
-      <div id="angerBar"></div>
-    </div>
-  </div>
+<div id="speech"></div>
 
-  <div id="timer">Survive: <span id="time">60</span>s</div>
+<div id="angerBox">
+  <b>ANGER</b>
+  <div id="bar"></div>
+</div>
 
-  <div id="girl">😡</div>
-  <div id="emotion">VERY ANGRY</div>
+<div id="girl">
+  <div class="head"></div>
+  <div class="arms"></div>
+  <div class="body"></div>
+  <div class="legs"></div>
+  <div id="emotion">CALM</div>
+</div>
 
-  <div id="eventPopup">
-    <div id="eventText">You forgot to reply 😡</div>
+<div id="controls">
+  <button onclick="calm(15)">💐 Flowers</button>
+  <button onclick="calm(10)">🍫 Chocolate</button>
+  <button onclick="calm(20)">😭 Apologise</button>
+  <button onclick="calm(12)">☕ Tea</button>
+  <button onclick="calm(25)">❤️ Hug</button>
+</div>
 
-    <button class="responseBtn" onclick="correctAnswer()">Sorry 🥺</button>
-    <button class="responseBtn" onclick="wrongAnswer()">Calm down 😭</button>
-  </div>
-
-  <div id="buttons">
-    <button onclick="reduceAnger(15)">💐 Flowers</button>
-    <button onclick="reduceAnger(10)">🍫 Chocolate</button>
-    <button onclick="reduceAnger(12)">☕ Tea</button>
-    <button onclick="reduceAnger(18)">🧸 Teddy</button>
-    <button onclick="reduceAnger(20)">😭 Apologise</button>
-    <button onclick="reduceAnger(8)">🎶 Music</button>
-  </div>
-
-  <div id="gameOverScreen">
-    <h1 id="endTitle">💥 GAME OVER</h1>
-    <p id="endText">Unnati exploded from rage 😭</p>
-    <button onclick="restartGame()">Play Again</button>
-  </div>
+<div id="boom">💥💥💥</div>
 
 </div>
 
 <script>
 
-let anger = 60;
-let timeLeft = 60;
-let gameEnded = false;
+let anger = 0;
+let started = false;
 
-const angerBar = document.getElementById("angerBar");
-const girl = document.getElementById("girl");
+const speech = [
+  ["Ta Jatha", 10],
+  ["Reply ni gar dai nas", 20],
+  ["khup raksi khayera bas sale", 30],
+  ["murda aru kt sanga bolis", 40],
+  ["ghar aune pardai na jatha", 50],
+  ["j gare ni gar sale khate jatha muji", 60]
+];
+
+let i = 0;
+
+const bar = document.getElementById("bar");
+const speechBox = document.getElementById("speech");
+const overlay = document.getElementById("overlay");
 const emotion = document.getElementById("emotion");
-const eventPopup = document.getElementById("eventPopup");
-const gameOverScreen = document.getElementById("gameOverScreen");
-const endTitle = document.getElementById("endTitle");
-const endText = document.getElementById("endText");
+const girl = document.getElementById("girl");
 
-function updateUI() {
-
-  angerBar.style.width = anger + "%";
+function update() {
+  bar.style.width = anger + "%";
 
   if (anger < 30) {
-    girl.innerHTML = "😊";
-    emotion.innerHTML = "CALM ❤️";
+    emotion.innerText = "CALM ❤️";
+    document.body.style.background = "#d4f7d4";
+    girl.classList.remove("shake");
   }
   else if (anger < 60) {
-    girl.innerHTML = "😐";
-    emotion.innerHTML = "STILL ANNOYED";
+    emotion.innerText = "ANNOYED 😐";
+    document.body.style.background = "#ffe6cc";
   }
   else if (anger < 85) {
-    girl.innerHTML = "😡";
-    emotion.innerHTML = "VERY ANGRY";
+    emotion.innerText = "ANGRY 😡";
+    document.body.style.background = "#ff9999";
   }
   else {
-    girl.innerHTML = "🤬";
-    emotion.innerHTML = "ABOUT TO EXPLODE";
+    emotion.innerText = "ABOUT TO EXPLODE 💥";
     girl.classList.add("shake");
-    document.body.style.background =
-      "linear-gradient(to bottom, #ff6666, #990000)";
-  }
-
-  if (anger < 85) {
-    girl.classList.remove("shake");
-    document.body.style.background =
-      "linear-gradient(to bottom, #ffd6e7, #ffb3c6)";
   }
 
   if (anger >= 100) {
-    loseGame();
+    explode();
+  }
+}
+
+function calm(val) {
+  if (!started) return;
+  anger -= val;
+  if (anger < 0) anger = 0;
+  update();
+}
+
+function startGame() {
+  overlay.style.display = "none";
+  started = true;
+  runSpeech();
+}
+
+function runSpeech() {
+  if (i >= speech.length) {
+    speechBox.style.display = "none";
+    return;
   }
 
-  if (anger < 0) anger = 0;
+  speechBox.style.display = "block";
+  speechBox.innerText = speech[i][0];
+
+  anger = speech[i][1];
+  update();
+
+  i++;
+
+  setTimeout(runSpeech, 1400);
 }
 
-function reduceAnger(amount) {
-  if (gameEnded) return;
-
-  anger -= amount;
-  updateUI();
-}
-
-function increaseAnger(amount) {
-  if (gameEnded) return;
-
-  anger += amount;
-  updateUI();
-}
-
-setInterval(() => {
-
-  if (gameEnded) return;
-
-  anger += 2;
-  updateUI();
-
-}, 1500);
-
-const events = [
-  "You forgot to reply 😡",
-  "You liked another girl's photo 😭",
-  "You said 'calm down' 😬",
-  "You were online but ignored her 💀",
-  "You forgot anniversary 😭"
-];
-
-function showEvent() {
-
-  if (gameEnded) return;
-
-  const randomEvent =
-    events[Math.floor(Math.random() * events.length)];
-
-  document.getElementById("eventText").innerHTML = randomEvent;
-
-  eventPopup.style.display = "block";
+function explode() {
+  document.getElementById("boom").style.display = "flex";
+  girl.style.display = "none";
+  speechBox.style.display = "none";
 
   setTimeout(() => {
-
-    if (eventPopup.style.display === "block") {
-      increaseAnger(15);
-      eventPopup.style.display = "none";
-    }
-
-  }, 4000);
-
+    alert("💥 Unnati exploded!");
+    location.reload();
+  }, 1500);
 }
 
-setInterval(showEvent, 9000);
-
-function correctAnswer() {
-
-  eventPopup.style.display = "none";
-  reduceAnger(12);
-
-}
-
-function wrongAnswer() {
-
-  eventPopup.style.display = "none";
-  increaseAnger(20);
-
-}
-
-const timer = setInterval(() => {
-
-  if (gameEnded) return;
-
-  timeLeft--;
-
-  document.getElementById("time").innerHTML = timeLeft;
-
-  if (timeLeft <= 0) {
-    winGame();
-  }
-
-}, 1000);
-
-function winGame() {
-
-  gameEnded = true;
-
-  gameOverScreen.style.display = "flex";
-
-  endTitle.innerHTML = "❤️ YOU SAVED UNNATI";
-  endText.innerHTML =
-    "You successfully stopped her from exploding 😭💖";
-}
-
-function loseGame() {
-
-  gameEnded = true;
-
-  gameOverScreen.style.display = "flex";
-
-  endTitle.innerHTML = "💥 GAME OVER";
-  endText.innerHTML =
-    "Unnati exploded from rage 😭";
-}
-
-function restartGame() {
-  location.reload();
-}
-
-updateUI();
+update();
 
 </script>
 
 </body>
 </html>
-```
