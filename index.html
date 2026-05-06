@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Can You Be Unnati Ko Poi?</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #ffb6c1, #ffe4e1);
+      overflow: hidden;
+    }
+
+    #gameArea {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+    }
+
+    #title {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 26px;
+      font-weight: bold;
+      color: #b30059;
+      text-shadow: 1px 1px 2px white;
+      z-index: 10;
+    }
+
+    #instructions {
+      position: absolute;
+      top: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      color: #b30059;
+      font-weight: bold;
+      z-index: 10;
+    }
+
+    #girlBox {
+      position: absolute;
+      top: 90px;
+      left: 15px;
+      width: 140px;
+      height: 140px;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 18px;
+      border: 3px solid #ff4d94;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    #girl {
+      font-size: 50px;
+    }
+
+    #girlName {
+      font-size: 14px;
+      font-weight: bold;
+      color: #b30059;
+      margin-top: 5px;
+    }
+
+    #loveBarContainer {
+      width: 110px;
+      height: 18px;
+      border: 2px solid #b30059;
+      border-radius: 10px;
+      margin-top: 10px;
+      overflow: hidden;
+      background: white;
+    }
+
+    #loveBar {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(to right, #ff1a75, #ff66b2);
+      transition: width 0.2s;
+    }
+
+    #boy {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 60px;
+      z-index: 5;
+    }
+
+    .heart {
+      position: absolute;
+      font-size: 35px;
+      top: -50px;
+      z-index: 4;
+    }
+
+    #hud {
+      position: absolute;
+      top: 90px;
+      right: 15px;
+      background: rgba(255,255,255,0.7);
+      padding: 12px 16px;
+      border-radius: 15px;
+      border: 3px solid #ff4d94;
+      font-size: 16px;
+      font-weight: bold;
+      color: #b30059;
+      z-index: 10;
+    }
+
+    #messageScreen {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: white;
+      z-index: 100;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #messageScreen h2 {
+      font-size: 42px;
+      margin-bottom: 10px;
+    }
+
+    #messageScreen p {
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      background: #ff4d94;
+      color: white;
+    }
+
+    button:hover {
+      background: #ff1a75;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="gameArea">
+    <div id="title">💖 Can You Be Unnati Ko Poi? 💖</div>
+    <div id="instructions">Use ⬅️ ➡️ to move and catch hearts!</div>
+
+    <div id="girlBox">
+      <div id="girl">👩</div>
+      <div id="girlName">Unnati</div>
+
+      <div id="loveBarContainer">
+        <div id="loveBar"></div>
+      </div>
+    </div>
+
+    <div id="hud">
+      Hearts: <span id="score">0</span> / 10 <br>
+      Missed: <span id="missed">0</span> / 3
+    </div>
+
+    <div id="boy">🧑</div>
+
+    <div id="messageScreen">
+      <h2 id="messageTitle">You Win!</h2>
+      <p id="messageText">You collected enough hearts!</p>
+      <button onclick="restartGame()">Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    const gameArea = document.getElementById("gameArea");
+    const boy = document.getElementById("boy");
+    const scoreText = document.getElementById("score");
+    const missedText = document.getElementById("missed");
+    const loveBar = document.getElementById("loveBar");
+
+    const messageScreen = document.getElementById("messageScreen");
+    const messageTitle = document.getElementById("messageTitle");
+    const messageText = document.getElementById("messageText");
+
+    let boyX = window.innerWidth / 2;
+    let score = 0;
+    let missed = 0;
+    let gameOver = false;
+
+    let heartInterval;
+
+    document.addEventListener("keydown", (e) => {
+      if (gameOver) return;
+
+      if (e.key === "ArrowLeft") boyX -= 40;
+      if (e.key === "ArrowRight") boyX += 40;
+
+      if (boyX < 30) boyX = 30;
+      if (boyX > window.innerWidth - 30) boyX = window.innerWidth - 30;
+
+      boy.style.left = boyX + "px";
+    });
+
+    function spawnHeart() {
+      if (gameOver) return;
+
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.innerText = "💖";
+
+      let heartX = Math.random() * (window.innerWidth - 50);
+      heart.style.left = heartX + "px";
+
+      gameArea.appendChild(heart);
+
+      let heartY = -50;
+      let fallSpeed = Math.random() * 2 + 4;
+
+      const fall = setInterval(() => {
+        if (gameOver) {
+          clearInterval(fall);
+          heart.remove();
+          return;
+        }
+
+        heartY += fallSpeed;
+        heart.style.top = heartY + "px";
+
+        const boyRect = boy.getBoundingClientRect();
+        const heartRect = heart.getBoundingClientRect();
+
+        if (
+          heartRect.bottom >= boyRect.top &&
+          heartRect.left < boyRect.right &&
+          heartRect.right > boyRect.left &&
+          heartRect.bottom < boyRect.bottom + 30
+        ) {
+          clearInterval(fall);
+          heart.remove();
+          collectHeart();
+        }
+
+        if (heartY > window.innerHeight) {
+          clearInterval(fall);
+          heart.remove();
+          missHeart();
+        }
+
+      }, 20);
+    }
+
+    function collectHeart() {
+      score++;
+      scoreText.innerText = score;
+
+      let percent = (score / 10) * 100;
+      loveBar.style.width = percent + "%";
+
+      if (score >= 10) winGame();
+    }
+
+    function missHeart() {
+      missed++;
+      missedText.innerText = missed;
+
+      if (missed >= 3) loseGame();
+    }
+
+    function winGame() {
+      gameOver = true;
+      clearInterval(heartInterval);
+
+      messageTitle.innerText = "💍 YOU GOT UNNATI!";
+      messageText.innerText = "You collected 10 hearts. You are officially Unnati ko Poi 😭💖";
+      messageScreen.style.display = "flex";
+    }
+
+    function loseGame() {
+      gameOver = true;
+      clearInterval(heartInterval);
+
+      messageTitle.innerText = "💔 GAME OVER";
+      messageText.innerText = "You missed 3 hearts. Unnati said NO 😭";
+      messageScreen.style.display = "flex";
+    }
+
+    function restartGame() {
+      score = 0;
+      missed = 0;
+      gameOver = false;
+
+      scoreText.innerText = score;
+      missedText.innerText = missed;
+      loveBar.style.width = "0%";
+
+      messageScreen.style.display = "none";
+      heartInterval = setInterval(spawnHeart, 900);
+    }
+
+    heartInterval = setInterval(spawnHeart, 900);
+
+    window.addEventListener("resize", () => {
+      boyX = window.innerWidth / 2;
+      boy.style.left = boyX + "px";
+    });
+  </script>
+</body>
+</html>
