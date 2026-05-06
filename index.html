@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Stop Unnati From Exploding (Choices)</title>
+<title>Stop Unnati From Exploding</title>
 
 <style>
 body {
@@ -30,7 +30,7 @@ body {
   position:relative;
 }
 
-/* CHARACTER (BETTER STICK FIGURE) */
+/* CHARACTER */
 #girl {
   position:absolute;
   left:50%;
@@ -40,58 +40,28 @@ body {
 }
 
 .head {
-  width:70px;
-  height:70px;
-  border:4px solid black;
-  border-radius:50%;
-  margin:auto;
-  position:relative;
-  background:#ffe0e0;
+  width:70px;height:70px;border:4px solid black;border-radius:50%;margin:auto;background:#ffe0e0;
 }
-
 .eye {
-  width:8px;
-  height:8px;
-  background:black;
-  border-radius:50%;
-  position:absolute;
-  top:25px;
+  width:8px;height:8px;background:black;border-radius:50%;position:absolute;top:25px;
 }
-
 .eye.left { left:18px; }
 .eye.right { right:18px; }
 
 .mouth {
-  width:20px;
-  height:10px;
-  border-bottom:3px solid black;
-  border-radius:50%;
-  margin:10px auto 0;
+  width:20px;height:10px;border-bottom:3px solid black;margin:10px auto 0;
 }
 
 .body {
-  width:6px;
-  height:90px;
-  background:black;
-  margin:auto;
+  width:6px;height:90px;background:black;margin:auto;
 }
 
 .arm {
-  width:80px;
-  height:4px;
-  background:black;
-  position:absolute;
-  top:120px;
-  left:50%;
-  transform:translateX(-50%);
+  width:80px;height:4px;background:black;position:absolute;top:120px;left:50%;transform:translateX(-50%);
 }
 
 .legs {
-  width:80px;
-  height:4px;
-  background:black;
-  margin:auto;
-  transform:translateY(20px);
+  width:80px;height:4px;background:black;margin:auto;transform:translateY(20px);
 }
 
 #emotion {
@@ -112,14 +82,14 @@ body {
 }
 
 #bar {
-  width:0%;
+  width:60%;
   height:20px;
   background:red;
   border-radius:10px;
   transition:0.2s;
 }
 
-/* STORY */
+/* SPEECH */
 #speech {
   position:absolute;
   top:18%;
@@ -145,14 +115,13 @@ body {
   gap:20px;
 }
 
-.choiceBtn {
-  padding:12px 18px;
-  font-size:16px;
+button {
+  padding:12px 16px;
   border-radius:12px;
   border:2px solid #ff4d88;
   background:white;
-  cursor:pointer;
   font-weight:bold;
+  cursor:pointer;
   width:200px;
 }
 
@@ -173,7 +142,6 @@ body {
 .shake {
   animation: shake 0.2s infinite;
 }
-
 @keyframes shake {
   0% { transform:translate(-50%,-50%) translateX(-4px); }
   50% { transform:translate(-50%,-50%) translateX(4px); }
@@ -199,9 +167,9 @@ body {
 <div id="title">💥 Stop Unnati From Exploding 💥</div>
 
 <div id="overlay">
-  <h1>Choice Game</h1>
-  <p>Pick the right response to calm her 😭</p>
-  <button onclick="startGame()">Start</button>
+  <h1>Game Start</h1>
+  <p>Calm her before she explodes emotionally 😭</p>
+  <button onclick="startIntro()">Start</button>
 </div>
 
 <div id="speech"></div>
@@ -211,7 +179,6 @@ body {
   <div id="bar"></div>
 </div>
 
-<!-- CHARACTER -->
 <div id="girl">
   <div class="head">
     <div class="eye left"></div>
@@ -221,14 +188,12 @@ body {
   <div class="arm"></div>
   <div class="body"></div>
   <div class="legs"></div>
-
   <div id="emotion">CALM</div>
 </div>
 
-<!-- CHOICES -->
 <div id="choices">
-  <button class="choiceBtn" onclick="choose(true)">💐 Apologise properly</button>
-  <button class="choiceBtn" onclick="choose(false)">😐 Ignore her feelings</button>
+  <button onclick="choose(true)">💐 Apologise</button>
+  <button onclick="choose(false)">😐 Ignore</button>
 </div>
 
 <div id="boom">💥💥💥</div>
@@ -239,17 +204,26 @@ body {
 
 let anger = 60;
 let step = 0;
+let started = false;
+
+const intro = [
+  ["Ta Jatha", 10],
+  ["ni gar dai nas", 20],
+  ["khup raksi khayera bas sale", 30],
+  ["murda aru kt sanga bolis", 40],
+  ["ghar auna pardai na jatha", 50],
+  ["j gare ni gar sale khate jatha muji", 60]
+];
 
 const story = [
-  "She says you ignored her messages",
-  "She thinks you don’t care",
-  "She is overthinking everything",
-  "She is about to explode emotionally",
+  "She is waiting for your response",
+  "She feels ignored",
+  "She is getting more emotional",
   "Final chance..."
 ];
 
-const bar = document.getElementById("bar");
 const speech = document.getElementById("speech");
+const bar = document.getElementById("bar");
 const emotion = document.getElementById("emotion");
 const girl = document.getElementById("girl");
 const overlay = document.getElementById("overlay");
@@ -260,44 +234,69 @@ function update() {
   if (anger < 30) emotion.innerText = "CALM ❤️";
   else if (anger < 60) emotion.innerText = "ANNOYED 😐";
   else if (anger < 85) emotion.innerText = "ANGRY 😡";
-  else {
-    emotion.innerText = "ABOUT TO EXPLODE 💥";
-    girl.classList.add("shake");
-  }
+  else girl.classList.add("shake");
 
   if (anger >= 100) explode();
 }
 
-function startGame() {
+function startIntro() {
   overlay.style.display = "none";
-  nextStep();
+  runIntro();
 }
 
-function nextStep() {
+/* INTRO DIALOGUE */
+let i = 0;
 
-  if (step >= story.length) return;
+function runIntro() {
+  if (i >= intro.length) {
+    started = true;
+    runGame();
+    return;
+  }
+
+  speech.style.display = "block";
+  speech.innerText = intro[i][0];
+
+  anger = intro[i][1];
+  update();
+
+  i++;
+  setTimeout(runIntro, 1200);
+}
+
+/* GAME LOOP */
+let passive = setInterval(() => {
+  if (!started) return;
+
+  anger += 1.5; // 👈 passive anger increase
+  update();
+
+}, 1500);
+
+function runGame() {
+  step = 0;
+  next();
+}
+
+function next() {
+  if (step >= story.length) {
+    speech.style.display = "none";
+    return;
+  }
 
   speech.style.display = "block";
   speech.innerText = story[step];
-
 }
 
 function choose(good) {
 
-  if (good) {
-    anger -= 15;
-  } else {
-    anger += 20;
-  }
+  if (!started) return;
+
+  if (good) anger -= 15;
+  else anger += 20;
 
   step++;
-
-  if (step < story.length) {
-    nextStep();
-  } else {
-    speech.style.display = "none";
-  }
-
+  next();
   update();
 }
 
@@ -306,7 +305,7 @@ function explode() {
   girl.style.display = "none";
 
   setTimeout(() => {
-    alert("💥 She exploded emotionally!");
+    alert("💥 She emotionally exploded!");
     location.reload();
   }, 1200);
 }
