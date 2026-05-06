@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Unnani Ultimate Quiz Game</title>
+<title>Stop Unnati From Exploding</title>
 
 <style>
 body {
@@ -87,7 +87,7 @@ body {
   font-weight:bold;
 }
 
-/* ANGER BAR */
+/* BAR */
 #barBox {
   position:absolute;
   top:70px;
@@ -100,47 +100,10 @@ body {
 }
 
 #bar {
-  width:50%;
+  width:20%;
   height:20px;
   background:red;
   border-radius:10px;
-  transition:0.2s;
-}
-
-/* QUESTION */
-#question {
-  position:absolute;
-  top:18%;
-  left:50%;
-  transform:translateX(-50%);
-  background:white;
-  padding:15px;
-  border-radius:10px;
-  border:3px solid black;
-  font-weight:bold;
-  text-align:center;
-  width:340px;
-}
-
-/* OPTIONS */
-#options {
-  position:absolute;
-  bottom:30px;
-  width:100%;
-  display:flex;
-  justify-content:center;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-button {
-  padding:12px;
-  border-radius:12px;
-  border:2px solid #ff4d88;
-  background:white;
-  font-weight:bold;
-  cursor:pointer;
-  width:240px;
 }
 
 /* INTRO */
@@ -153,13 +116,51 @@ button {
   padding:15px;
   border-radius:10px;
   border:3px solid black;
-  font-weight:bold;
-  text-align:center;
   width:340px;
-  z-index:10;
+  text-align:center;
+  font-weight:bold;
+  display:none;
 }
 
-/* END SCREEN */
+/* QUESTION */
+#question {
+  position:absolute;
+  top:18%;
+  left:50%;
+  transform:translateX(-50%);
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  border:3px solid black;
+  width:340px;
+  text-align:center;
+  font-weight:bold;
+  display:none;
+}
+
+/* OPTIONS */
+#options {
+  position:absolute;
+  bottom:30px;
+  width:100%;
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:10px;
+  display:none;
+}
+
+button {
+  padding:12px;
+  border-radius:12px;
+  border:2px solid #ff4d88;
+  background:white;
+  font-weight:bold;
+  cursor:pointer;
+  width:240px;
+}
+
+/* END */
 #end {
   position:absolute;
   inset:0;
@@ -170,10 +171,8 @@ button {
   background:rgba(0,0,0,0.85);
   color:white;
   z-index:100;
-  text-align:center;
 }
 
-/* EXPLOSION */
 #boom {
   position:absolute;
   inset:0;
@@ -194,9 +193,9 @@ button {
   <div id="bar"></div>
 </div>
 
-<div id="intro">Loading...</div>
+<div id="intro"></div>
 
-<div id="question">Loading...</div>
+<div id="question"></div>
 
 <div id="girl">
   <div class="head">
@@ -225,7 +224,7 @@ button {
 let anger = 20;
 let q = 0;
 let i = 0;
-let gameStarted = false;
+let started = false;
 
 /* ELEMENTS */
 const introBox = document.getElementById("intro");
@@ -237,7 +236,7 @@ const end = document.getElementById("end");
 const endText = document.getElementById("endText");
 const boom = document.getElementById("boom");
 
-/* INTRO DIALOGUE */
+/* INTRO */
 const introLines = [
   "Ta Jatha",
   "ni gar dai nas",
@@ -259,53 +258,11 @@ options:[
 ]
 },
 {
-q:"What is her personality?",
-options:[
-["Calm 😊",-5],
-["Moody 😐",-5],
-["Funny 😂",-5],
-["Serious 😌",-5]
-]
-},
-{
-q:"What is her nickname?",
-options:[
-["Unnani 💖",-10],
-["Bunny 🐰",10],
-["Cutie Pie 🍰",10],
-["Star Girl ⭐",10]
-]
-},
-{
 q:"What should you do when she is angry?",
 options:[
 ["Ignore 😐",15],
 ["Apologise 💖",-15],
 ["Argue 😡",25]
-]
-},
-{
-q:"What is the best way to fix a mistake?",
-options:[
-["Say sorry ❤️",-15],
-["Ignore 😶",10],
-["Blame her 😡",25]
-]
-},
-{
-q:"What makes her happiest?",
-options:[
-["Spend time 💕",-15],
-["Ignore messages 📵",15],
-["Fight 💥",25]
-]
-},
-{
-q:"If she is upset, what should you do first?",
-options:[
-["Ask 🥺",-15],
-["Leave 🚶",20],
-["Joke 😐",10]
 ]
 },
 {
@@ -315,43 +272,33 @@ options:[
 ["Lies 🤥",20],
 ["Secrets 😶",20]
 ]
-},
-{
-q:"Key to stopping explosion?",
-options:[
-["Understand 💖",-20],
-["Win argument 😤",20],
-["Ignore 😬",25]
-]
 }
 ];
 
-/* UPDATE UI */
-function update() {
-
-  bar.style.width = anger + "%";
-
-  if (anger <= 0) win();
-  if (anger >= 100) explode();
-
-  if (anger < 30) emotion.innerText = "CALM ❤️";
-  else if (anger < 60) emotion.innerText = "OK 😐";
-  else if (anger < 85) emotion.innerText = "ANGRY 😡";
-  else emotion.innerText = "VERY ANGRY 💥";
+/* SHOW START SCREEN */
+function startGame(){
+  introBox.style.display = "block";
+  introBox.innerText = "Starting...";
+  runIntro();
 }
 
-/* INTRO */
-function runIntro() {
+/* INTRO LOOP */
+function runIntro(){
 
-  if (i >= introLines.length) {
+  introBox.style.display = "block";
+  questionBox.style.display = "none";
+  optionsBox.style.display = "none";
+
+  if(i >= introLines.length){
     introBox.style.display = "none";
-    gameStarted = true;
+    started = true;
     loadQuestion();
     return;
   }
 
   introBox.innerText = introLines[i];
-  anger += 6;
+  anger += 5;
+
   update();
 
   i++;
@@ -359,11 +306,14 @@ function runIntro() {
 }
 
 /* QUESTIONS */
-function loadQuestion() {
+function loadQuestion(){
 
-  if (!gameStarted) return;
+  if(!started) return;
 
-  if (q >= questions.length) {
+  questionBox.style.display = "block";
+  optionsBox.style.display = "flex";
+
+  if(q >= questions.length){
     win();
     return;
   }
@@ -389,24 +339,40 @@ function loadQuestion() {
   });
 }
 
+/* UPDATE */
+function update(){
+
+  bar.style.width = anger + "%";
+
+  if(started){
+    if(anger <= 0) win();
+    if(anger >= 100) explode();
+  }
+
+  if(anger < 30) emotion.innerText = "CALM ❤️";
+  else if(anger < 60) emotion.innerText = "OK 😐";
+  else if(anger < 85) emotion.innerText = "ANGRY 😡";
+  else emotion.innerText = "VERY ANGRY 💥";
+}
+
 /* WIN */
-function win() {
+function win(){
   end.style.display = "flex";
   endText.innerHTML = "💖 I LOVE YOU 💖";
 }
 
 /* EXPLODE */
-function explode() {
+function explode(){
   boom.style.display = "flex";
-  setTimeout(() => {
+  setTimeout(()=>{
     end.style.display = "flex";
     endText.innerHTML = "💥 She exploded!";
-  }, 1000);
+  },1000);
 }
 
-/* START GAME */
+/* INIT */
 update();
-runIntro();
+startGame();
 
 </script>
 
