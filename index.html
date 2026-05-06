@@ -11,7 +11,6 @@ body {
   font-family: Arial;
   overflow:hidden;
   background: linear-gradient(to bottom, #ffd6e7, #ffb3c6);
-  transition:0.4s;
 }
 
 #title {
@@ -24,7 +23,7 @@ body {
   color:#b3003c;
 }
 
-/* 👤 IMPROVED CHARACTER */
+/* STICK FIGURE */
 #girl {
   position:absolute;
   left:50%;
@@ -33,7 +32,6 @@ body {
   text-align:center;
 }
 
-/* HEAD */
 .head {
   width:90px;
   height:90px;
@@ -44,28 +42,25 @@ body {
   position:relative;
 }
 
-/* EYES */
 .eye {
   width:10px;
   height:10px;
   background:black;
   border-radius:50%;
   position:absolute;
-  top:30px;
+  top:32px;
 }
-.eye.left { left:22px; }
-.eye.right { right:22px; }
+.eye.left { left:25px; }
+.eye.right { right:25px; }
 
-/* MOUTH (changes via JS style idea) */
 .mouth {
-  width:30px;
+  width:28px;
   height:12px;
   border-bottom:3px solid black;
-  border-radius:50%;
   margin:18px auto 0;
+  border-radius:50%;
 }
 
-/* BODY */
 .body {
   width:8px;
   height:100px;
@@ -73,7 +68,6 @@ body {
   margin:auto;
 }
 
-/* ARMS (now properly attached) */
 .arms {
   width:110px;
   height:4px;
@@ -81,7 +75,6 @@ body {
   margin:-60px auto 0;
 }
 
-/* LEGS */
 .legs {
   width:90px;
   height:4px;
@@ -150,7 +143,7 @@ button {
   width:240px;
 }
 
-/* INTRO DIALOGUE */
+/* INTRO */
 #intro {
   position:absolute;
   top:18%;
@@ -166,7 +159,7 @@ button {
   z-index:10;
 }
 
-/* END */
+/* END SCREEN */
 #end {
   position:absolute;
   inset:0;
@@ -201,8 +194,7 @@ button {
   <div id="bar"></div>
 </div>
 
-<!-- INTRO -->
-<div id="intro">Loading story...</div>
+<div id="intro">Loading...</div>
 
 <div id="question">Loading...</div>
 
@@ -229,107 +221,13 @@ button {
 
 <script>
 
-let anger = 0;
+/* STATE */
+let anger = 20;
 let q = 0;
-let started = false;
+let i = 0;
+let gameStarted = false;
 
-const introLines = [
-  ["Ta Jatha"],
-  ["ni gar dai nas"],
-  ["khup raksi khayera bas sale"],
-  ["murda aru kt sanga bolis"],
-  ["ghar auna pardai na jatha"],
-  ["j gare ni gar sale khate jatha muji"]
-];
-
-const questions = [
-
-{
-q:"What is her favourite food/snack?",
-options:[
-["Chatpate 😋",-10],
-["Dal Bhat 🍛",10],
-["Momo 🥟",10],
-["Chowmein 🍜",10]
-]
-},
-
-{
-q:"Who is the sexiest?",
-options:[
-["Sanga,",-5],
-["Sangam",-5],
-["Sangam",-5],
-["Sangam",-5]
-]
-},
-
-{
-q:"What is her nickname?",
-options:[
-["Unnani 💖",-10],
-["Jathi",10],
-["Risaune KT",10],
-["Pokhara Girl",10]
-]
-},
-
-{
-q:"What should you do when she is angry?",
-options:[
-["Ignore her 😐",15],
-["Listen & apologise 💖",-15],
-["Argue back 😡",25]
-]
-},
-
-{
-q:"What is the best way to fix a mistake?",
-options:[
-["Say sorry ❤️",-15],
-["Pretend nothing happened 😶",10],
-["Blame her 😡",25]
-]
-},
-
-{
-q:"What makes her happiest?",
-options:[
-["Spending time together 💕",-15],
-["Ignoring messages 📵",15],
-["Fighting 💥",25]
-]
-},
-
-{
-q:"If she is upset, what should you do first?",
-options:[
-["Ask what’s wrong 🥺",-15],
-["Leave her 🚶",20],
-["Joke about it 😐",10]
-]
-},
-
-{
-q:"What builds trust?",
-options:[
-["Honesty 🤍",-15],
-["Lies 🤥",20],
-["Secrets 😶",20]
-]
-},
-
-{
-q:"What is key to stopping her from exploding?",
-options:[
-["Understanding 💖",-20],
-["Winning arguments 😤",20],
-["Ignoring everything 😬",25]
-]
-}
-
-];
-
+/* ELEMENTS */
 const introBox = document.getElementById("intro");
 const questionBox = document.getElementById("question");
 const optionsBox = document.getElementById("options");
@@ -339,27 +237,96 @@ const end = document.getElementById("end");
 const endText = document.getElementById("endText");
 const boom = document.getElementById("boom");
 
-/* INTRO SYSTEM */
-let i = 0;
+/* INTRO DIALOGUE */
+const introLines = [
+  "Ta Jatha",
+  "ni gar dai nas",
+  "khup raksi khayera bas sale",
+  "murda aru kt sanga bolis",
+  "ghar auna pardai na jatha",
+  "j gare ni gar sale khate jatha muji"
+];
 
-function runIntro() {
-
-  if (i >= introLines.length) {
-    introBox.style.display = "none";
-    started = true;
-    loadQuestion();
-    return;
-  }
-
-  introBox.innerText = introLines[i][0];
-  anger += 10;
-  update();
-
-  i++;
-  setTimeout(runIntro, 1200);
+/* QUESTIONS */
+const questions = [
+{
+q:"What is her favourite food/snack?",
+options:[
+["Chatpate 😋",-10],
+["Dal Bhat 🍛",10],
+["Momo 🥟",10],
+["Chowmein 🍜",10]
+]
+},
+{
+q:"What is her personality?",
+options:[
+["Calm 😊",-5],
+["Moody 😐",-5],
+["Funny 😂",-5],
+["Serious 😌",-5]
+]
+},
+{
+q:"What is her nickname?",
+options:[
+["Unnani 💖",-10],
+["Bunny 🐰",10],
+["Cutie Pie 🍰",10],
+["Star Girl ⭐",10]
+]
+},
+{
+q:"What should you do when she is angry?",
+options:[
+["Ignore 😐",15],
+["Apologise 💖",-15],
+["Argue 😡",25]
+]
+},
+{
+q:"What is the best way to fix a mistake?",
+options:[
+["Say sorry ❤️",-15],
+["Ignore 😶",10],
+["Blame her 😡",25]
+]
+},
+{
+q:"What makes her happiest?",
+options:[
+["Spend time 💕",-15],
+["Ignore messages 📵",15],
+["Fight 💥",25]
+]
+},
+{
+q:"If she is upset, what should you do first?",
+options:[
+["Ask 🥺",-15],
+["Leave 🚶",20],
+["Joke 😐",10]
+]
+},
+{
+q:"What builds trust?",
+options:[
+["Honesty 🤍",-15],
+["Lies 🤥",20],
+["Secrets 😶",20]
+]
+},
+{
+q:"Key to stopping explosion?",
+options:[
+["Understand 💖",-20],
+["Win argument 😤",20],
+["Ignore 😬",25]
+]
 }
+];
 
-/* GAME */
+/* UPDATE UI */
 function update() {
 
   bar.style.width = anger + "%";
@@ -370,12 +337,31 @@ function update() {
   if (anger < 30) emotion.innerText = "CALM ❤️";
   else if (anger < 60) emotion.innerText = "OK 😐";
   else if (anger < 85) emotion.innerText = "ANGRY 😡";
-  else emotion.innerText = "ABOUT TO EXPLODE 💥";
+  else emotion.innerText = "VERY ANGRY 💥";
 }
 
+/* INTRO */
+function runIntro() {
+
+  if (i >= introLines.length) {
+    introBox.style.display = "none";
+    gameStarted = true;
+    loadQuestion();
+    return;
+  }
+
+  introBox.innerText = introLines[i];
+  anger += 6;
+  update();
+
+  i++;
+  setTimeout(runIntro, 1200);
+}
+
+/* QUESTIONS */
 function loadQuestion() {
 
-  if (!started) return;
+  if (!gameStarted) return;
 
   if (q >= questions.length) {
     win();
@@ -403,11 +389,13 @@ function loadQuestion() {
   });
 }
 
+/* WIN */
 function win() {
   end.style.display = "flex";
   endText.innerHTML = "💖 I LOVE YOU 💖";
 }
 
+/* EXPLODE */
 function explode() {
   boom.style.display = "flex";
   setTimeout(() => {
@@ -416,6 +404,7 @@ function explode() {
   }, 1000);
 }
 
+/* START GAME */
 update();
 runIntro();
 
