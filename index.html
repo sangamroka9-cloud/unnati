@@ -1,322 +1,404 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Can You Be Unnati Ko Poi?</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Stop Unnati From Exploding</title>
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to bottom, #ffb6c1, #ffe4e1);
-      overflow: hidden;
-    }
+<style>
+  * {
+    box-sizing: border-box;
+  }
 
-    #gameArea {
-      width: 100vw;
-      height: 100vh;
-      position: relative;
-    }
+  body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #ffd6e7, #ffb3c6);
+    transition: background 0.3s;
+  }
 
-    #title {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 26px;
-      font-weight: bold;
-      color: #b30059;
-      text-shadow: 1px 1px 2px white;
-      z-index: 10;
-    }
+  #game {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+  }
 
-    #instructions {
-      position: absolute;
-      top: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 14px;
-      color: #b30059;
-      font-weight: bold;
-      z-index: 10;
-    }
+  #title {
+    position: absolute;
+    top: 15px;
+    width: 100%;
+    text-align: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #b3003c;
+    z-index: 10;
+  }
 
-    #girlBox {
-      position: absolute;
-      top: 90px;
-      left: 15px;
-      width: 140px;
-      height: 140px;
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 18px;
-      border: 3px solid #ff4d94;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      z-index: 10;
-    }
+  #timer {
+    position: absolute;
+    top: 70px;
+    right: 20px;
+    background: white;
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-weight: bold;
+    border: 3px solid #ff4d88;
+    z-index: 10;
+  }
 
-    #girl {
-      font-size: 50px;
-    }
+  #angerBox {
+    position: absolute;
+    top: 70px;
+    left: 20px;
+    width: 260px;
+    background: white;
+    border-radius: 15px;
+    border: 3px solid #ff4d88;
+    padding: 15px;
+    z-index: 10;
+  }
 
-    #girlName {
-      font-size: 14px;
-      font-weight: bold;
-      color: #b30059;
-      margin-top: 5px;
-    }
+  #angerText {
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #b3003c;
+  }
 
-    #loveBarContainer {
-      width: 110px;
-      height: 18px;
-      border: 2px solid #b30059;
-      border-radius: 10px;
-      margin-top: 10px;
-      overflow: hidden;
-      background: white;
-    }
+  #angerBarContainer {
+    width: 100%;
+    height: 28px;
+    background: #eee;
+    border-radius: 20px;
+    overflow: hidden;
+    border: 2px solid #b3003c;
+  }
 
-    #loveBar {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(to right, #ff1a75, #ff66b2);
-      transition: width 0.2s;
-    }
+  #angerBar {
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(to right, orange, red);
+    transition: width 0.2s;
+  }
 
-    #boy {
-      position: absolute;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 60px;
-      z-index: 5;
-    }
+  #girl {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    transform: translate(-50%, -50%);
+    font-size: 140px;
+    transition: transform 0.1s;
+  }
 
-    .heart {
-      position: absolute;
-      font-size: 35px;
-      top: -50px;
-      z-index: 4;
-    }
+  #emotion {
+    position: absolute;
+    left: 50%;
+    top: 62%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    font-weight: bold;
+    color: #990000;
+  }
 
-    #hud {
-      position: absolute;
-      top: 90px;
-      right: 15px;
-      background: rgba(255,255,255,0.7);
-      padding: 12px 16px;
-      border-radius: 15px;
-      border: 3px solid #ff4d94;
-      font-size: 16px;
-      font-weight: bold;
-      color: #b30059;
-      z-index: 10;
-    }
+  #buttons {
+    position: absolute;
+    bottom: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 20px;
+  }
 
-    #messageScreen {
-      position: absolute;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      color: white;
-      z-index: 100;
-      text-align: center;
-      padding: 20px;
-    }
+  button {
+    padding: 14px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    background: white;
+    border: 3px solid #ff4d88;
+    font-weight: bold;
+    transition: 0.2s;
+  }
 
-    #messageScreen h2 {
-      font-size: 42px;
-      margin-bottom: 10px;
-    }
+  button:hover {
+    transform: scale(1.08);
+    background: #ffe6ef;
+  }
 
-    #messageScreen p {
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
+  #eventPopup {
+    position: absolute;
+    top: 160px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 4px solid red;
+    border-radius: 20px;
+    padding: 20px;
+    width: 340px;
+    display: none;
+    z-index: 50;
+    text-align: center;
+  }
 
-    button {
-      padding: 12px 18px;
-      border: none;
-      border-radius: 12px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      background: #ff4d94;
-      color: white;
-    }
+  #eventText {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #990000;
+    font-weight: bold;
+  }
 
-    button:hover {
-      background: #ff1a75;
-    }
-  </style>
+  .responseBtn {
+    margin: 8px;
+    padding: 10px 14px;
+    font-size: 16px;
+  }
+
+  #gameOverScreen {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 100;
+    text-align: center;
+  }
+
+  #gameOverScreen h1 {
+    font-size: 60px;
+    margin-bottom: 10px;
+  }
+
+  #gameOverScreen p {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .shake {
+    animation: shake 0.2s infinite;
+  }
+
+  @keyframes shake {
+    0% { transform: translate(-50%, -50%) translateX(-4px); }
+    50% { transform: translate(-50%, -50%) translateX(4px); }
+    100% { transform: translate(-50%, -50%) translateX(-4px); }
+  }
+</style>
 </head>
 
 <body>
-  <div id="gameArea">
-    <div id="title">💖 Can You Be Unnati Ko Poi? 💖</div>
-    <div id="instructions">Use ⬅️ ➡️ to move and catch hearts!</div>
 
-    <div id="girlBox">
-      <div id="girl">👩</div>
-      <div id="girlName">Unnati</div>
+<div id="game">
 
-      <div id="loveBarContainer">
-        <div id="loveBar"></div>
-      </div>
-    </div>
+  <div id="title">💥 Stop Unnati From Exploding 💥</div>
 
-    <div id="hud">
-      Hearts: <span id="score">0</span> / 10 <br>
-      Missed: <span id="missed">0</span> / 3
-    </div>
+  <div id="angerBox">
+    <div id="angerText">ANGER LEVEL 😡</div>
 
-    <div id="boy">🧑</div>
-
-    <div id="messageScreen">
-      <h2 id="messageTitle">You Win!</h2>
-      <p id="messageText">You collected enough hearts!</p>
-      <button onclick="restartGame()">Play Again</button>
+    <div id="angerBarContainer">
+      <div id="angerBar"></div>
     </div>
   </div>
 
-  <script>
-    const gameArea = document.getElementById("gameArea");
-    const boy = document.getElementById("boy");
-    const scoreText = document.getElementById("score");
-    const missedText = document.getElementById("missed");
-    const loveBar = document.getElementById("loveBar");
+  <div id="timer">Survive: <span id="time">60</span>s</div>
 
-    const messageScreen = document.getElementById("messageScreen");
-    const messageTitle = document.getElementById("messageTitle");
-    const messageText = document.getElementById("messageText");
+  <div id="girl">😡</div>
+  <div id="emotion">VERY ANGRY</div>
 
-    let boyX = window.innerWidth / 2;
-    let score = 0;
-    let missed = 0;
-    let gameOver = false;
+  <div id="eventPopup">
+    <div id="eventText">You forgot to reply 😡</div>
 
-    let heartInterval;
+    <button class="responseBtn" onclick="correctAnswer()">Sorry 🥺</button>
+    <button class="responseBtn" onclick="wrongAnswer()">Calm down 😭</button>
+  </div>
 
-    document.addEventListener("keydown", (e) => {
-      if (gameOver) return;
+  <div id="buttons">
+    <button onclick="reduceAnger(15)">💐 Flowers</button>
+    <button onclick="reduceAnger(10)">🍫 Chocolate</button>
+    <button onclick="reduceAnger(12)">☕ Tea</button>
+    <button onclick="reduceAnger(18)">🧸 Teddy</button>
+    <button onclick="reduceAnger(20)">😭 Apologise</button>
+    <button onclick="reduceAnger(8)">🎶 Music</button>
+  </div>
 
-      if (e.key === "ArrowLeft") boyX -= 40;
-      if (e.key === "ArrowRight") boyX += 40;
+  <div id="gameOverScreen">
+    <h1 id="endTitle">💥 GAME OVER</h1>
+    <p id="endText">Unnati exploded from rage 😭</p>
+    <button onclick="restartGame()">Play Again</button>
+  </div>
 
-      if (boyX < 30) boyX = 30;
-      if (boyX > window.innerWidth - 30) boyX = window.innerWidth - 30;
+</div>
 
-      boy.style.left = boyX + "px";
-    });
+<script>
 
-    function spawnHeart() {
-      if (gameOver) return;
+let anger = 60;
+let timeLeft = 60;
+let gameEnded = false;
 
-      const heart = document.createElement("div");
-      heart.classList.add("heart");
-      heart.innerText = "💖";
+const angerBar = document.getElementById("angerBar");
+const girl = document.getElementById("girl");
+const emotion = document.getElementById("emotion");
+const eventPopup = document.getElementById("eventPopup");
+const gameOverScreen = document.getElementById("gameOverScreen");
+const endTitle = document.getElementById("endTitle");
+const endText = document.getElementById("endText");
 
-      let heartX = Math.random() * (window.innerWidth - 50);
-      heart.style.left = heartX + "px";
+function updateUI() {
 
-      gameArea.appendChild(heart);
+  angerBar.style.width = anger + "%";
 
-      let heartY = -50;
-      let fallSpeed = Math.random() * 2 + 4;
+  if (anger < 30) {
+    girl.innerHTML = "😊";
+    emotion.innerHTML = "CALM ❤️";
+  }
+  else if (anger < 60) {
+    girl.innerHTML = "😐";
+    emotion.innerHTML = "STILL ANNOYED";
+  }
+  else if (anger < 85) {
+    girl.innerHTML = "😡";
+    emotion.innerHTML = "VERY ANGRY";
+  }
+  else {
+    girl.innerHTML = "🤬";
+    emotion.innerHTML = "ABOUT TO EXPLODE";
+    girl.classList.add("shake");
+    document.body.style.background =
+      "linear-gradient(to bottom, #ff6666, #990000)";
+  }
 
-      const fall = setInterval(() => {
-        if (gameOver) {
-          clearInterval(fall);
-          heart.remove();
-          return;
-        }
+  if (anger < 85) {
+    girl.classList.remove("shake");
+    document.body.style.background =
+      "linear-gradient(to bottom, #ffd6e7, #ffb3c6)";
+  }
 
-        heartY += fallSpeed;
-        heart.style.top = heartY + "px";
+  if (anger >= 100) {
+    loseGame();
+  }
 
-        const boyRect = boy.getBoundingClientRect();
-        const heartRect = heart.getBoundingClientRect();
+  if (anger < 0) anger = 0;
+}
 
-        if (
-          heartRect.bottom >= boyRect.top &&
-          heartRect.left < boyRect.right &&
-          heartRect.right > boyRect.left &&
-          heartRect.bottom < boyRect.bottom + 30
-        ) {
-          clearInterval(fall);
-          heart.remove();
-          collectHeart();
-        }
+function reduceAnger(amount) {
+  if (gameEnded) return;
 
-        if (heartY > window.innerHeight) {
-          clearInterval(fall);
-          heart.remove();
-          missHeart();
-        }
+  anger -= amount;
+  updateUI();
+}
 
-      }, 20);
+function increaseAnger(amount) {
+  if (gameEnded) return;
+
+  anger += amount;
+  updateUI();
+}
+
+setInterval(() => {
+
+  if (gameEnded) return;
+
+  anger += 2;
+  updateUI();
+
+}, 1500);
+
+const events = [
+  "You forgot to reply 😡",
+  "You liked another girl's photo 😭",
+  "You said 'calm down' 😬",
+  "You were online but ignored her 💀",
+  "You forgot anniversary 😭"
+];
+
+function showEvent() {
+
+  if (gameEnded) return;
+
+  const randomEvent =
+    events[Math.floor(Math.random() * events.length)];
+
+  document.getElementById("eventText").innerHTML = randomEvent;
+
+  eventPopup.style.display = "block";
+
+  setTimeout(() => {
+
+    if (eventPopup.style.display === "block") {
+      increaseAnger(15);
+      eventPopup.style.display = "none";
     }
 
-    function collectHeart() {
-      score++;
-      scoreText.innerText = score;
+  }, 4000);
 
-      let percent = (score / 10) * 100;
-      loveBar.style.width = percent + "%";
+}
 
-      if (score >= 10) winGame();
-    }
+setInterval(showEvent, 9000);
 
-    function missHeart() {
-      missed++;
-      missedText.innerText = missed;
+function correctAnswer() {
 
-      if (missed >= 3) loseGame();
-    }
+  eventPopup.style.display = "none";
+  reduceAnger(12);
 
-    function winGame() {
-      gameOver = true;
-      clearInterval(heartInterval);
+}
 
-      messageTitle.innerText = "💍 YOU GOT UNNATI!";
-      messageText.innerText = "You collected 10 hearts. You are officially Unnati ko Poi 😭💖";
-      messageScreen.style.display = "flex";
-    }
+function wrongAnswer() {
 
-    function loseGame() {
-      gameOver = true;
-      clearInterval(heartInterval);
+  eventPopup.style.display = "none";
+  increaseAnger(20);
 
-      messageTitle.innerText = "💔 GAME OVER";
-      messageText.innerText = "You missed 3 hearts. Unnati said NO 😭";
-      messageScreen.style.display = "flex";
-    }
+}
 
-    function restartGame() {
-      score = 0;
-      missed = 0;
-      gameOver = false;
+const timer = setInterval(() => {
 
-      scoreText.innerText = score;
-      missedText.innerText = missed;
-      loveBar.style.width = "0%";
+  if (gameEnded) return;
 
-      messageScreen.style.display = "none";
-      heartInterval = setInterval(spawnHeart, 900);
-    }
+  timeLeft--;
 
-    heartInterval = setInterval(spawnHeart, 900);
+  document.getElementById("time").innerHTML = timeLeft;
 
-    window.addEventListener("resize", () => {
-      boyX = window.innerWidth / 2;
-      boy.style.left = boyX + "px";
-    });
-  </script>
+  if (timeLeft <= 0) {
+    winGame();
+  }
+
+}, 1000);
+
+function winGame() {
+
+  gameEnded = true;
+
+  gameOverScreen.style.display = "flex";
+
+  endTitle.innerHTML = "❤️ YOU SAVED UNNATI";
+  endText.innerHTML =
+    "You successfully stopped her from exploding 😭💖";
+}
+
+function loseGame() {
+
+  gameEnded = true;
+
+  gameOverScreen.style.display = "flex";
+
+  endTitle.innerHTML = "💥 GAME OVER";
+  endText.innerHTML =
+    "Unnati exploded from rage 😭";
+}
+
+function restartGame() {
+  location.reload();
+}
+
+updateUI();
+
+</script>
+
 </body>
 </html>
+```
