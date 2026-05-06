@@ -24,7 +24,7 @@ body {
   color:#b3003c;
 }
 
-/* CHARACTER */
+/* 👤 IMPROVED CHARACTER */
 #girl {
   position:absolute;
   left:50%;
@@ -33,15 +33,18 @@ body {
   text-align:center;
 }
 
+/* HEAD */
 .head {
-  width:80px;
-  height:80px;
+  width:90px;
+  height:90px;
   border:4px solid black;
   border-radius:50%;
   margin:auto;
   background:#ffe0e0;
+  position:relative;
 }
 
+/* EYES */
 .eye {
   width:10px;
   height:10px;
@@ -50,35 +53,40 @@ body {
   position:absolute;
   top:30px;
 }
-.eye.left { left:20px; }
-.eye.right { right:20px; }
+.eye.left { left:22px; }
+.eye.right { right:22px; }
 
+/* MOUTH (changes via JS style idea) */
 .mouth {
-  width:25px;
-  height:10px;
+  width:30px;
+  height:12px;
   border-bottom:3px solid black;
-  margin:15px auto 0;
+  border-radius:50%;
+  margin:18px auto 0;
 }
 
+/* BODY */
 .body {
-  width:6px;
-  height:90px;
+  width:8px;
+  height:100px;
   background:black;
   margin:auto;
 }
 
+/* ARMS (now properly attached) */
 .arms {
-  width:90px;
+  width:110px;
   height:4px;
   background:black;
-  margin:-55px auto 0;
+  margin:-60px auto 0;
 }
 
+/* LEGS */
 .legs {
   width:90px;
   height:4px;
   background:black;
-  margin:40px auto 0;
+  margin:50px auto 0;
 }
 
 #emotion {
@@ -142,6 +150,22 @@ button {
   width:240px;
 }
 
+/* INTRO DIALOGUE */
+#intro {
+  position:absolute;
+  top:18%;
+  left:50%;
+  transform:translateX(-50%);
+  background:white;
+  padding:15px;
+  border-radius:10px;
+  border:3px solid black;
+  font-weight:bold;
+  text-align:center;
+  width:340px;
+  z-index:10;
+}
+
 /* END */
 #end {
   position:absolute;
@@ -177,10 +201,17 @@ button {
   <div id="bar"></div>
 </div>
 
+<!-- INTRO -->
+<div id="intro">Loading story...</div>
+
 <div id="question">Loading...</div>
 
 <div id="girl">
-  <div class="head"></div>
+  <div class="head">
+    <div class="eye left"></div>
+    <div class="eye right"></div>
+    <div class="mouth"></div>
+  </div>
   <div class="arms"></div>
   <div class="body"></div>
   <div class="legs"></div>
@@ -198,8 +229,18 @@ button {
 
 <script>
 
-let anger = 50;
+let anger = 0;
 let q = 0;
+let started = false;
+
+const introLines = [
+  ["Ta Jatha"],
+  ["ni gar dai nas"],
+  ["khup raksi khayera bas sale"],
+  ["murda aru kt sanga bolis"],
+  ["ghar auna pardai na jatha"],
+  ["j gare ni gar sale khate jatha muji"]
+];
 
 const questions = [
 
@@ -214,12 +255,12 @@ options:[
 },
 
 {
-q:"What is her personality?",
+q:"Who is the sexiest?",
 options:[
-["Calm 😊",-5],
-["Moody 😐",-5],
-["Funny 😂",-5],
-["Serious 😌",-5]
+["Sanga,",-5],
+["Sangam",-5],
+["Sangam",-5],
+["Sangam",-5]
 ]
 },
 
@@ -227,9 +268,9 @@ options:[
 q:"What is her nickname?",
 options:[
 ["Unnani 💖",-10],
-["Bunny 🐰",10],
-["Cutie Pie 🍰",10],
-["Star Girl ⭐",10]
+["Jathi",10],
+["Risaune KT",10],
+["Pokhara Girl",10]
 ]
 },
 
@@ -289,6 +330,7 @@ options:[
 
 ];
 
+const introBox = document.getElementById("intro");
 const questionBox = document.getElementById("question");
 const optionsBox = document.getElementById("options");
 const bar = document.getElementById("bar");
@@ -297,7 +339,29 @@ const end = document.getElementById("end");
 const endText = document.getElementById("endText");
 const boom = document.getElementById("boom");
 
+/* INTRO SYSTEM */
+let i = 0;
+
+function runIntro() {
+
+  if (i >= introLines.length) {
+    introBox.style.display = "none";
+    started = true;
+    loadQuestion();
+    return;
+  }
+
+  introBox.innerText = introLines[i][0];
+  anger += 10;
+  update();
+
+  i++;
+  setTimeout(runIntro, 1200);
+}
+
+/* GAME */
 function update() {
+
   bar.style.width = anger + "%";
 
   if (anger <= 0) win();
@@ -310,6 +374,8 @@ function update() {
 }
 
 function loadQuestion() {
+
+  if (!started) return;
 
   if (q >= questions.length) {
     win();
@@ -351,7 +417,7 @@ function explode() {
 }
 
 update();
-loadQuestion();
+runIntro();
 
 </script>
 
