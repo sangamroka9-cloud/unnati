@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Stop Unnati From Exploding</title>
+<title>Stop Unnati From Exploding (Choices)</title>
 
 <style>
 body {
@@ -19,7 +19,7 @@ body {
   top:10px;
   width:100%;
   text-align:center;
-  font-size:26px;
+  font-size:24px;
   font-weight:bold;
   color:#b3003c;
 }
@@ -30,52 +30,84 @@ body {
   position:relative;
 }
 
-/* STICK FIGURE */
+/* CHARACTER (BETTER STICK FIGURE) */
 #girl {
   position:absolute;
   left:50%;
   top:45%;
   transform:translate(-50%,-50%);
+  text-align:center;
 }
 
 .head {
-  width:60px;height:60px;border:4px solid black;border-radius:50%;margin:auto;
+  width:70px;
+  height:70px;
+  border:4px solid black;
+  border-radius:50%;
+  margin:auto;
+  position:relative;
+  background:#ffe0e0;
 }
+
+.eye {
+  width:8px;
+  height:8px;
+  background:black;
+  border-radius:50%;
+  position:absolute;
+  top:25px;
+}
+
+.eye.left { left:18px; }
+.eye.right { right:18px; }
+
+.mouth {
+  width:20px;
+  height:10px;
+  border-bottom:3px solid black;
+  border-radius:50%;
+  margin:10px auto 0;
+}
+
 .body {
-  width:4px;height:90px;background:black;margin:auto;
+  width:6px;
+  height:90px;
+  background:black;
+  margin:auto;
 }
-.arms {
-  width:80px;height:4px;background:black;margin:-55px auto 0;
+
+.arm {
+  width:80px;
+  height:4px;
+  background:black;
+  position:absolute;
+  top:120px;
+  left:50%;
+  transform:translateX(-50%);
 }
+
 .legs {
-  width:80px;height:4px;background:black;margin:45px auto 0;
+  width:80px;
+  height:4px;
+  background:black;
+  margin:auto;
+  transform:translateY(20px);
 }
 
 #emotion {
-  text-align:center;
-  font-weight:bold;
   margin-top:10px;
+  font-weight:bold;
 }
 
-/* SHAKE */
-.shake {
-  animation: shake 0.2s infinite;
-}
-@keyframes shake {
-  0% { transform:translate(-50%,-50%) translateX(-4px); }
-  50% { transform:translate(-50%,-50%) translateX(4px); }
-  100% { transform:translate(-50%,-50%) translateX(-4px); }
-}
-
-/* ANGER BAR */
+/* ANGER */
 #angerBox {
   position:absolute;
   top:70px;
   left:20px;
   width:240px;
   background:white;
-  border-radius:12px;
   border:3px solid #ff4d88;
+  border-radius:12px;
   padding:10px;
 }
 
@@ -87,7 +119,7 @@ body {
   transition:0.2s;
 }
 
-/* SPEECH */
+/* STORY */
 #speech {
   position:absolute;
   top:18%;
@@ -100,26 +132,28 @@ body {
   font-weight:bold;
   display:none;
   text-align:center;
+  max-width:300px;
 }
 
-/* BUTTONS */
-#controls {
+/* CHOICES */
+#choices {
   position:absolute;
-  bottom:20px;
+  bottom:30px;
   width:100%;
   display:flex;
   justify-content:center;
-  flex-wrap:wrap;
-  gap:10px;
+  gap:20px;
 }
 
-button {
-  padding:10px 14px;
-  border-radius:10px;
+.choiceBtn {
+  padding:12px 18px;
+  font-size:16px;
+  border-radius:12px;
   border:2px solid #ff4d88;
   background:white;
-  font-weight:bold;
   cursor:pointer;
+  font-weight:bold;
+  width:200px;
 }
 
 /* OVERLAY */
@@ -133,7 +167,17 @@ button {
   flex-direction:column;
   color:white;
   z-index:100;
-  text-align:center;
+}
+
+/* SHAKE */
+.shake {
+  animation: shake 0.2s infinite;
+}
+
+@keyframes shake {
+  0% { transform:translate(-50%,-50%) translateX(-4px); }
+  50% { transform:translate(-50%,-50%) translateX(4px); }
+  100% { transform:translate(-50%,-50%) translateX(-4px); }
 }
 
 /* EXPLOSION */
@@ -155,8 +199,8 @@ button {
 <div id="title">💥 Stop Unnati From Exploding 💥</div>
 
 <div id="overlay">
-  <h1>Game Starting</h1>
-  <p>Calm her before she reaches 100%</p>
+  <h1>Choice Game</h1>
+  <p>Pick the right response to calm her 😭</p>
   <button onclick="startGame()">Start</button>
 </div>
 
@@ -167,20 +211,24 @@ button {
   <div id="bar"></div>
 </div>
 
+<!-- CHARACTER -->
 <div id="girl">
-  <div class="head"></div>
-  <div class="arms"></div>
+  <div class="head">
+    <div class="eye left"></div>
+    <div class="eye right"></div>
+    <div class="mouth"></div>
+  </div>
+  <div class="arm"></div>
   <div class="body"></div>
   <div class="legs"></div>
+
   <div id="emotion">CALM</div>
 </div>
 
-<div id="controls">
-  <button onclick="calm(15)">💐 Flowers</button>
-  <button onclick="calm(10)">🍫 Chocolate</button>
-  <button onclick="calm(20)">😭 Apologise</button>
-  <button onclick="calm(12)">☕ Tea</button>
-  <button onclick="calm(25)">❤️ Hug</button>
+<!-- CHOICES -->
+<div id="choices">
+  <button class="choiceBtn" onclick="choose(true)">💐 Apologise properly</button>
+  <button class="choiceBtn" onclick="choose(false)">😐 Ignore her feelings</button>
 </div>
 
 <div id="boom">💥💥💥</div>
@@ -189,91 +237,78 @@ button {
 
 <script>
 
-let anger = 0;
-let started = false;
+let anger = 60;
+let step = 0;
 
-const speech = [
-  ["Ta Jatha", 10],
-  ["Reply ni gar dai nas", 20],
-  ["khup raksi khayera bas sale", 30],
-  ["murda aru kt sanga bolis", 40],
-  ["ghar aune pardai na jatha", 50],
-  ["j gare ni gar sale khate jatha muji", 60]
+const story = [
+  "She says you ignored her messages",
+  "She thinks you don’t care",
+  "She is overthinking everything",
+  "She is about to explode emotionally",
+  "Final chance..."
 ];
 
-let i = 0;
-
 const bar = document.getElementById("bar");
-const speechBox = document.getElementById("speech");
-const overlay = document.getElementById("overlay");
+const speech = document.getElementById("speech");
 const emotion = document.getElementById("emotion");
 const girl = document.getElementById("girl");
+const overlay = document.getElementById("overlay");
 
 function update() {
   bar.style.width = anger + "%";
 
-  if (anger < 30) {
-    emotion.innerText = "CALM ❤️";
-    document.body.style.background = "#d4f7d4";
-    girl.classList.remove("shake");
-  }
-  else if (anger < 60) {
-    emotion.innerText = "ANNOYED 😐";
-    document.body.style.background = "#ffe6cc";
-  }
-  else if (anger < 85) {
-    emotion.innerText = "ANGRY 😡";
-    document.body.style.background = "#ff9999";
-  }
+  if (anger < 30) emotion.innerText = "CALM ❤️";
+  else if (anger < 60) emotion.innerText = "ANNOYED 😐";
+  else if (anger < 85) emotion.innerText = "ANGRY 😡";
   else {
     emotion.innerText = "ABOUT TO EXPLODE 💥";
     girl.classList.add("shake");
   }
 
-  if (anger >= 100) {
-    explode();
-  }
-}
-
-function calm(val) {
-  if (!started) return;
-  anger -= val;
-  if (anger < 0) anger = 0;
-  update();
+  if (anger >= 100) explode();
 }
 
 function startGame() {
   overlay.style.display = "none";
-  started = true;
-  runSpeech();
+  nextStep();
 }
 
-function runSpeech() {
-  if (i >= speech.length) {
-    speechBox.style.display = "none";
-    return;
+function nextStep() {
+
+  if (step >= story.length) return;
+
+  speech.style.display = "block";
+  speech.innerText = story[step];
+
+}
+
+function choose(good) {
+
+  if (good) {
+    anger -= 15;
+  } else {
+    anger += 20;
   }
 
-  speechBox.style.display = "block";
-  speechBox.innerText = speech[i][0];
+  step++;
 
-  anger = speech[i][1];
+  if (step < story.length) {
+    nextStep();
+  } else {
+    speech.style.display = "none";
+  }
+
   update();
-
-  i++;
-
-  setTimeout(runSpeech, 1400);
 }
 
 function explode() {
   document.getElementById("boom").style.display = "flex";
   girl.style.display = "none";
-  speechBox.style.display = "none";
 
   setTimeout(() => {
-    alert("💥 Unnati exploded!");
+    alert("💥 She exploded emotionally!");
     location.reload();
-  }, 1500);
+  }, 1200);
 }
 
 update();
